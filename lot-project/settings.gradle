@@ -1,0 +1,4 @@
+include ':gateway'
+include ':HuaweiIotLibrary'
+include ':app'
+rootProject.name = "LotProject"

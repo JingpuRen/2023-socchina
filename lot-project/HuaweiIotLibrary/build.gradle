@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+task cleanJar(type: Delete){
+    //删除存在的
+    delete 'build/libs/com.huaweicloud.sdk.iot.device-1.0.0.jar'
+    delete 'build/libs/classes/'
+}
+
+task copyJavaclasses(type: Copy) {
+
+    //设置拷贝的文件
+    from('build/intermediates/javac/release/classes')
+
+    //打进jar包后的文件目录
+    into('build/libs/')
+}
+
+task makeJar(type: Exec){
+    workingDir 'build/libs/'
+    commandLine 'cmd', '/c', 'jar cvf com.huaweicloud.sdk.iot.device-1.0.0.jar -C ./ .'
+}
+
+cleanJar.dependsOn(build)
+copyJavaclasses.dependsOn(cleanJar)
+makeJar.dependsOn(copyJavaclasses)
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+}
